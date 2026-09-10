@@ -1,0 +1,16 @@
+{
+  "name": "farmdesk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @farmdesk/api --filter @farmdesk/web dev",
+    "dev:web": "pnpm --filter @farmdesk/web dev",
+    "dev:api": "pnpm --filter @farmdesk/api dev",
+    "build": "pnpm -r build",
+    "db:setup": "pnpm --filter @farmdesk/api db:setup",
+    "db:seed": "pnpm --filter @farmdesk/api db:seed"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

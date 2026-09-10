@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Fraunces", "Source Serif 4", Georgia, serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --color-paper: #faf7f1;
+  --color-paper-dark: #f2ede1;
+  --color-ink: #1a1714;
+  --color-ink-soft: #4a443c;
+  --color-ink-faint: #7a7264;
+  --color-rule: #d9d2c2;
+  --color-rule-dark: #1a1714;
+  --color-moss: #2f5d33;
+  --color-moss-dark: #234726;
+  --color-moss-pale: #e6efe2;
+  --color-brick: #a83c2a;
+  --color-ochre: #b07d1e;
+  --color-sky-ink: #2a5d7d;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* newspaper texture: subtle rules, no gradients */
+.paper-card {
+  background: #fffdf8;
+  border: 1px solid var(--color-rule);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.paper-card.card-hover:hover {
+  border-color: var(--color-moss);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 -2px var(--color-paper), 0 5px 0 -1px var(--color-ink);
+}
+
+.rule-double {
+  border-top: 1px solid var(--color-ink);
+  box-shadow: 0 3px 0 -2px var(--color-paper), 0 4px 0 -1px var(--color-ink);
+}
+
+.headline {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.kicker {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.dateline {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: var(--color-ink-faint);
+}
+
+.btn-ink {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  transition: background 0.18s ease, transform 0.12s ease;
+}
+.btn-ink:hover {
+  background: var(--color-moss-dark);
+}
+.btn-ink:active {
+  transform: translateY(1px);
+}
+.btn-ink:disabled,
+.btn-outline:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-ink:disabled:hover {
+  background: var(--color-ink);
+}
+
+.btn-outline {
+  border: 1px solid var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+}
+.btn-outline:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn-outline:active {
+  transform: translateY(1px);
+}
+
+.input-news {
+  width: 100%;
+  border: 1px solid var(--color-rule);
+  background: #fffdf8;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  border-radius: 2px;
+}
+.input-news:focus {
+  outline: 2px solid var(--color-moss);
+  outline-offset: 0;
+  border-color: var(--color-moss);
+}
+
+.label-news {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.progress-ink {
+  height: 8px;
+  background: var(--color-paper-dark);
+  border: 1px solid var(--color-rule);
+}
+.progress-ink > div {
+  height: 100%;
+  background: var(--color-moss);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #efe9da 25%, #f7f2e7 50%, #efe9da 75%);
+  background-size: 200% 100%;
+  animation: sk 1.2s infinite;
+}
+@keyframes sk {
+  to { background-position: -200% 0; }
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  z-index: 0;
+}
+
+/* ---------- motion ---------- */
+/* page transition */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* subtle link underline slide */
+a.nav-slide {
+  position: relative;
+}
+a.nav-slide::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: var(--color-moss);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+a.nav-slide:hover::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .page-enter-active, .page-leave-active { transition: none; }
+  .paper-card, .btn-ink, .btn-outline { transition: none; }
+}
+

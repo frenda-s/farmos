@@ -1,0 +1,34 @@
+{
+  "name": "@farmdesk/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "pinia": "^3.0.1",
+    "lucide-vue-next": "^0.468.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0",
+    "radix-vue": "^1.9.11",
+    "zod": "^3.24.1",
+    "chart.js": "^4.4.7",
+    "vue-chartjs": "^5.3.2",
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.2.0",
+    "typescript": "^5.7.3",
+    "vue-tsc": "^2.2.0",
+    "tailwindcss": "^4.0.9",
+    "@tailwindcss/vite": "^4.0.9",
+    "@types/leaflet": "^1.9.14"
+  }
+}

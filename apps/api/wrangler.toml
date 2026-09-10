@@ -1,0 +1,17 @@
+name = "farmdesk-api"
+main = "src/worker.ts"
+compatibility_date = "2024-11-27"
+account_id = "f30ef23d0263fff7a42e7bab8dd0457d"
+
+[vars]
+TURSO_URL = "libsql://farmos-frenda.aws-ap-northeast-1.turso.io"
+
+[assets]
+directory = "../web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = true
+
+# Secrets — set via `wrangler secret put`:
+#   TURSO_TOKEN — Turso auth token
+#   JWT_SECRET — JWT signing secret

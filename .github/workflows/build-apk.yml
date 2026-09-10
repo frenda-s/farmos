@@ -1,0 +1,108 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      API_URL:
+        description: 'API base URL to embed into the APK (must be a deployed https URL)'
+        required: false
+        default: 'https://farmdesk-api.frenda.workers.dev'
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/web/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/build-apk.yml'
+    tags:
+      - 'v*'
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Java 17 (for Gradle/Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build web (SPA) with API base URL
+        env:
+          VITE_API_URL: ${{ github.event.inputs.API_URL || 'https://farmdesk-api.frenda.workers.dev' }}
+        run: pnpm --filter @farmdesk/web build
+
+      - name: Add Capacitor to apps/web
+        working-directory: apps/web
+        run: |
+          pnpm add -D @capacitor/cli
+          pnpm add @capacitor/core @capacitor/android
+
+      - name: Create Capacitor config
+        working-directory: apps/web
+        run: |
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'vn.farmdesk.app',
+            appName: 'FarmDesk',
+            webDir: 'dist',
+            android: {
+              allowMixedContent: true,
+            },
+          };
+
+          export default config;
+          EOF
+          cat > .npmrc <<'EOF'
+          node-linker=hoisted
+          EOF
+
+      - name: Generate Android project
+        working-directory: apps/web
+        run: npx cap add android
+
+      - name: Sync web assets into Android
+        working-directory: apps/web
+        run: npx cap sync android
+
+      - name: Build debug APK with Gradle
+        working-directory: apps/web/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK (artifact — requires GitHub login)
+        uses: actions/upload-artifact@v4
+        with:
+          name: farmdesk-apk
+          path: apps/web/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Attach APK to GitHub Release (on v* tag push)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: apps/web/android/app/build/outputs/apk/debug/app-debug.apk
+          generate_release_notes: true
